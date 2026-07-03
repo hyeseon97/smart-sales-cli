@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "customer_id": "C001",
+    "customer_name": "연서진",
+    "manager_name": "박혜선",
+    "email": "sj@gmail.com",
+    "is_deleted": false
+  },
+  {
+    "customer_id": "C002",
+    "customer_name": "세메스",
+    "manager_name": "박혜선",
+    "email": "semes@semes.com",
+    "is_deleted": false
+  }
+]
