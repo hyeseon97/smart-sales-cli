@@ -1,16 +1,16 @@
 [
   {
     "customer_id": "C001",
-    "customer_name": "연서진",
+    "customer_name": "세메스",
     "manager_name": "박혜선",
-    "email": "sj@gmail.com",
+    "email": "semes@semes.com",
     "is_deleted": false
   },
   {
     "customer_id": "C002",
-    "customer_name": "세메스",
+    "customer_name": "천안시",
     "manager_name": "박혜선",
-    "email": "semes@semes.com",
+    "email": "cheonan@gmail.com",
     "is_deleted": false
   }
 ]

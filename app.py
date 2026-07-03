@@ -1,5 +1,5 @@
 import sys
-from commands.customer_commands import register_customer, list_customers, detail_customer, search_customers, update_customer, delete_customer, export_customers_csv
+from customer_service import register_customer, list_customers, get_customer, update_customer, delete_customer
 from commands.report_commands import register_report, list_reports, update_report, submit_report, approve_report, reject_report, withdraw_report, summary_by_customer
 
 
@@ -10,31 +10,119 @@ def show_customer_menu():
         print("1. 고객사 등록")
         print("2. 고객사 목록")
         print("3. 고객사 상세 조회")
-        print("4. 고객사 검색")
-        print("5. 고객사 수정")
-        print("6. 고객사 삭제")
-        print("7. CSV 내보내기")
-        print("8. 뒤로가기")
+        print("4. 고객사 수정")
+        print("5. 고객사 삭제")
+        print("6. 뒤로가기")
         choice = input("\n메뉴를 선택하세요: ").strip()
 
         if choice == "1":
-            register_customer()
+            _register_customer_ui()
         elif choice == "2":
-            list_customers()
+            _list_customers_ui()
         elif choice == "3":
-            detail_customer()
+            _detail_customer_ui()
         elif choice == "4":
-            search_customers()
+            _update_customer_ui()
         elif choice == "5":
-            update_customer()
+            _delete_customer_ui()
         elif choice == "6":
-            delete_customer()
-        elif choice == "7":
-            export_customers_csv()
-        elif choice == "8":
             break
         else:
-            print("잘못된 입력입니다. 1~8 사이의 숫자를 입력하세요.")
+            print("잘못된 입력입니다. 1~6 사이의 숫자를 입력하세요.")
+
+
+def _register_customer_ui():
+    """고객사 등록 UI"""
+    print("\n=== 고객사 등록 ===")
+    customer_name = input("고객사명: ").strip()
+    manager_name = input("담당자명: ").strip()
+    email = input("이메일: ").strip()
+
+    result = register_customer(customer_name, manager_name, email)
+    if result["success"]:
+        print(f"\n고객사가 등록되었습니다: {result['customer_id']}")
+    else:
+        print("\n입력 오류:")
+        for err in result["errors"]:
+            print(f"  - {err}")
+
+
+def _list_customers_ui():
+    """고객사 목록 UI"""
+    customers = list_customers()
+
+    print("\n=== 고객사 목록 ===")
+    if not customers:
+        print("등록된 고객사가 없습니다.")
+        return
+
+    print(f"{'코드':<8} {'고객사명':<20} {'담당자명':<12} {'이메일':<30}")
+    print("-" * 70)
+    for c in customers:
+        print(f"{c.get('customer_id', ''):<8} {c.get('customer_name', ''):<20} {c.get('manager_name', ''):<12} {c.get('email', ''):<30}")
+
+
+def _detail_customer_ui():
+    """고객사 상세 조회 UI"""
+    print("\n=== 고객사 상세 조회 ===")
+    customer_id = input("조회할 고객사 코드: ").strip()
+
+    customer = get_customer(customer_id)
+    if customer:
+        print(f"\n  고객사코드: {customer.get('customer_id', '')}")
+        print(f"  고객사명:   {customer.get('customer_name', '')}")
+        print(f"  담당자명:   {customer.get('manager_name', '')}")
+        print(f"  이메일:     {customer.get('email', '')}")
+    else:
+        print(f"\n고객사 코드 '{customer_id}'가 존재하지 않습니다.")
+
+
+def _update_customer_ui():
+    """고객사 수정 UI"""
+    print("\n=== 고객사 수정 ===")
+    customer_id = input("수정할 고객사 코드: ").strip()
+
+    customer = get_customer(customer_id)
+    if not customer:
+        print(f"\n고객사 코드 '{customer_id}'가 존재하지 않습니다.")
+        return
+
+    print("\n[기존값을 유지하려면 엔터를 입력하세요]")
+    new_name = input(f"고객사명 ({customer['customer_name']}): ").strip()
+    new_manager = input(f"담당자명 ({customer['manager_name']}): ").strip()
+    new_email = input(f"이메일 ({customer['email']}): ").strip()
+
+    result = update_customer(customer_id, new_name, new_manager, new_email)
+    if result["success"]:
+        print(f"\n고객사 '{customer_id}' 정보가 수정되었습니다.")
+    else:
+        print("\n입력 오류:")
+        for err in result["errors"]:
+            print(f"  - {err}")
+
+
+def _delete_customer_ui():
+    """고객사 삭제 UI"""
+    print("\n=== 고객사 삭제 ===")
+    customer_id = input("삭제할 고객사 코드: ").strip()
+
+    customer = get_customer(customer_id)
+    if not customer:
+        print(f"\n고객사 코드 '{customer_id}'가 존재하지 않습니다.")
+        return
+
+    print(f"\n  고객사코드: {customer.get('customer_id', '')}")
+    print(f"  고객사명:   {customer.get('customer_name', '')}")
+    print(f"  담당자명:   {customer.get('manager_name', '')}")
+    print(f"  이메일:     {customer.get('email', '')}")
+    confirm = input("\n정말 삭제하시겠습니까? (y/n): ").strip().lower()
+    if confirm != "y":
+        print("삭제가 취소되었습니다.")
+        return
+
+    result = delete_customer(customer_id)
+    if result["success"]:
+        print(f"\n고객사 '{customer_id}'가 삭제되었습니다.")
 
 
 def show_report_menu():
